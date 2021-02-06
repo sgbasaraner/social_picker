@@ -23,7 +23,7 @@ public class SwiftSocialPickerPlugin: NSObject, FlutterPlugin {
     config.shouldSaveNewPicturesToAlbum = true
     print("max video duration picked: \(maxVideoDurationSeconds)")
     let picker = YPImagePicker(configuration: config)
-    picker.didFinishPicking { [unowned picker] items, _ in
+    picker.didFinishPicking { [weak picker] items, _ in
         if let photo = items.singlePhoto {
             print("picked single photo")
             if let asset = photo.asset {
@@ -54,7 +54,7 @@ public class SwiftSocialPickerPlugin: NSObject, FlutterPlugin {
             print("URL sent: \(video.url)")
             result(video.url)
         }
-        picker.dismiss(animated: true, completion: nil)
+        picker?.dismiss(animated: true, completion: nil)
     }
     let controller: FlutterViewController = UIApplication.shared.delegate!.window!!.rootViewController as! FlutterViewController;
     controller.present(picker, animated: true, completion: nil)
