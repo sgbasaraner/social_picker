@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
     String path;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      path = await SocialPicker.pickMedia();
+      path = await SocialPicker.pickMedia(maxVideoDurationSeconds: 15);
     } on PlatformException {
       path = 'Failed to pick media.';
     }
