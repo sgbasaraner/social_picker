@@ -40,7 +40,8 @@ public class SwiftSocialPickerPlugin: NSObject, FlutterPlugin {
                 })
             } else {
                 if let data = photo.image.jpegData(compressionQuality: 0.8) {
-                   let filename = getDocumentsDirectory().appendingPathComponent("copy.jpg")
+                    let uuid = UUID().uuidString
+                   let filename = getDocumentsDirectory().appendingPathComponent("\(uuid).jpg")
                     do {
                         try data.write(to: filename)
                         print("URL sent: \(filename.absoluteString)")
