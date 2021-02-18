@@ -18,14 +18,17 @@ public class SwiftSocialPickerPlugin: NSObject, FlutterPlugin {
     
     let maxVideoDurationSeconds = Double(call.arguments as! Int)
     config.video.trimmerMaxDuration = maxVideoDurationSeconds
+    config.video.trimmerMinDuration = 1
+    config.video.minimumTimeLimit = 1
     config.video.recordingTimeLimit = maxVideoDurationSeconds
     config.video.libraryTimeLimit = maxVideoDurationSeconds
+    config.video.compression = AVAssetExportPresetMediumQuality
+    config.video.fileType = .mp4
+    config.library.mediaType = .photoAndVideo
     config.shouldSaveNewPicturesToAlbum = true
-    print("max video duration picked: \(maxVideoDurationSeconds)")
     let picker = YPImagePicker(configuration: config)
     picker.didFinishPicking { [weak picker] items, _ in
         if let photo = items.singlePhoto {
-            print("picked single photo")
             if let asset = photo.asset {
                 asset.getURL(completionHandler: { (url) in
                     guard let url = url else {
@@ -47,21 +50,17 @@ public class SwiftSocialPickerPlugin: NSObject, FlutterPlugin {
                     }
                }
             }
-            
-            
         }
         if let video = items.singleVideo {
-            print("URL sent: \(video.url)")
-            result(video.url)
+            print("URL sent: \(video.url.absoluteString)")
+            result(video.url.absoluteString)
         }
         picker?.dismiss(animated: true, completion: nil)
     }
+    
     let controller: FlutterViewController = UIApplication.shared.delegate!.window!!.rootViewController as! FlutterViewController;
     controller.present(picker, animated: true, completion: nil)
-    
   }
-    
-    
 }
 
 func getDocumentsDirectory() -> URL {
