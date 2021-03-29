@@ -29,34 +29,12 @@ public class SwiftSocialPickerPlugin: NSObject, FlutterPlugin {
     let picker = YPImagePicker(configuration: config)
     picker.didFinishPicking { [weak picker] items, _ in
         if let photo = items.singlePhoto {
-            if let asset = photo.asset {
-                asset.getURL(completionHandler: { (url) in
-                    guard let url = url else {
-                        print("URL sending failed")
-                        return
-                    }
-                    if url.absoluteString.split(separator: ".").last?.lowercased() == "heic" {
-                        // HEIC file
-                        print("HEIC to JPG conversion starting for: \(url.absoluteString)")
-                        guard let writtenFile = writeJPEGCompressed(image: photo.image) else {
-                            print("URL sending failed")
-                            return
-                        }
-                        print("URL sent: \(writtenFile.absoluteString)")
-                        result(writtenFile.absoluteString)
-                    } else {
-                        print("URL sent: \(url.absoluteString)")
-                        result(url.absoluteString)
-                    }
-                })
-            } else {
-                guard let writtenFile = writeJPEGCompressed(image: photo.image) else {
-                    print("URL sending failed")
-                    return
-                }
-                print("URL sent: \(writtenFile.absoluteString)")
-                result(writtenFile.absoluteString)
+            guard let writtenFile = writeJPEGCompressed(image: photo.image) else {
+                print("URL sending failed")
+                return
             }
+            print("URL sent: \(writtenFile.absoluteString)")
+            result(writtenFile.absoluteString)
         }
         if let video = items.singleVideo {
             print("URL sent: \(video.url.absoluteString)")
