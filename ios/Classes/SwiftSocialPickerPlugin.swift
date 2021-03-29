@@ -35,21 +35,27 @@ public class SwiftSocialPickerPlugin: NSObject, FlutterPlugin {
                         print("URL sending failed")
                         return
                     }
-                    print("URL sent: \(url.absoluteString)")
-                    result(url.absoluteString)
+                    if url.absoluteString.split(separator: ".").last?.lowercased() == "heic" {
+                        // HEIC file
+                        print("HEIC to JPG conversion starting for: \(url.absoluteString)")
+                        guard let writtenFile = writeJPEGCompressed(image: photo.image) else {
+                            print("URL sending failed")
+                            return
+                        }
+                        print("URL sent: \(writtenFile.absoluteString)")
+                        result(writtenFile.absoluteString)
+                    } else {
+                        print("URL sent: \(url.absoluteString)")
+                        result(url.absoluteString)
+                    }
                 })
             } else {
-                if let data = photo.image.jpegData(compressionQuality: 0.8) {
-                    let uuid = UUID().uuidString
-                   let filename = getDocumentsDirectory().appendingPathComponent("\(uuid).jpg")
-                    do {
-                        try data.write(to: filename)
-                        print("URL sent: \(filename.absoluteString)")
-                        result(filename.absoluteString)
-                    } catch _ {
-                        
-                    }
-               }
+                guard let writtenFile = writeJPEGCompressed(image: photo.image) else {
+                    print("URL sending failed")
+                    return
+                }
+                print("URL sent: \(writtenFile.absoluteString)")
+                result(writtenFile.absoluteString)
             }
         }
         if let video = items.singleVideo {
@@ -62,6 +68,22 @@ public class SwiftSocialPickerPlugin: NSObject, FlutterPlugin {
     let controller: FlutterViewController = UIApplication.shared.delegate!.window!!.rootViewController as! FlutterViewController;
     controller.present(picker, animated: true, completion: nil)
   }
+}
+
+func writeJPEGCompressed(image: UIImage) -> URL? {
+    guard let data = image.jpegData(compressionQuality: 0.8) else { return nil }
+    return writeJPEG(data: data)
+}
+
+func writeJPEG(data: Data) -> URL? {
+    let uuid = UUID().uuidString
+    let filename = getDocumentsDirectory().appendingPathComponent("\(uuid).jpg")
+    do {
+        try data.write(to: filename)
+        return filename
+    } catch _ {
+        return nil
+    }
 }
 
 func getDocumentsDirectory() -> URL {
