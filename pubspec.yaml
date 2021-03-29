@@ -1,6 +1,6 @@
 name: social_picker
 description: No-nonsense media selection for Flutter for social media apps.
-version: 0.1.0
+version: 0.1.1
 homepage: https://sgbasaraner.github.io
 
 environment:
